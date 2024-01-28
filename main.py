@@ -1,14 +1,17 @@
 from account import Account
+from gui import GUI
 
-account_list = ['f033025', 'f01191221', 'f01340400', 'f01310053', 'f01784916']
+account_name_list = ['f033025', 'f01191221', 'f01340400', 'f01310053', 'f01784916']
 
-acc0 = Account(account_list[0])
-acc1 = Account(account_list[1])
-acc2 = Account(account_list[2])
-acc3 = Account(account_list[3])
-acc4 = Account(account_list[4])
+id = 0
 
-accounts: [Account] = [acc0, acc1, acc2, acc3, acc4]
+program = GUI()
 
-for acc in accounts:
-    print(acc.status)
+for account in account_name_list:
+    globals()[f'account_{id}'] = Account(account)
+    program.add_account(globals()[f'account_{id}'])
+    id += 1
+    
+print(f'총 {id}개의 계정이 추가되었습니다.')
+
+program.start()
