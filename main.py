@@ -1,11 +1,11 @@
 from account import Account
-from gui import GUI
+from status_gui import StatusGUI
 
 account_name_list = ['f033025', 'f01191221', 'f01340400', 'f01310053', 'f01784916']
 
 id = 0
 
-program = GUI()
+program = StatusGUI()
 
 for account in account_name_list:
     globals()[f'account_{id}'] = Account(account)
