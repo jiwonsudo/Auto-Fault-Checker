@@ -56,6 +56,7 @@ class GUI(Account):
             if timer <= 0:
                 for id in range(0, self.num_of_account):
                     self.update_account_strVar(id)
+
                     
         for id in range(0, self.num_of_account):
             self.update_account_strVar(id)
