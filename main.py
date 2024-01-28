@@ -12,6 +12,6 @@ for account in account_name_list:
     program.add_account(globals()[f'account_{id}'])
     id += 1
     
-print(f'총 {id}개의 계정이 추가되었습니다.')
+print(f'총 {id}개의 계정이 추가되었습니다: {account_name_list}.')
 
 program.start()

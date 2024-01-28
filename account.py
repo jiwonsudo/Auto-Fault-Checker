@@ -13,12 +13,14 @@ class Account:
       }
       self.last_check_time = 'not yet'
       self.url: str = pre_url + self.id
+      self.html = requests.get(self.url).text
+      self.soup = bs(self.html, 'lxml')
       self.update_status()
     
     def update_status(self):
         
-        def get_innertext_by_css_selector(soup: bs, selector: str) -> str:
-            tags = soup.select(selector)
+        def get_innertext_by_css_selector(selector: str) -> str:
+            tags = self.soup.select(selector)
             firstTag = tags[0]
             firstTagStr: str = firstTag.text
             return firstTagStr
@@ -28,13 +30,10 @@ class Account:
             number: str = ''.join(numbers)
             return int(number) 
         
-        html = requests.get(self.url).text
-        soup = bs(html, 'lxml')
-        
-        self.status['total'] = get_number_only(get_innertext_by_css_selector(soup, '.text-xs.text-gray-800.text-right > span:first-child'))
-        self.status['active'] = get_number_only(get_innertext_by_css_selector(soup, '.text-green-600'))
-        self.status['fault'] = get_number_only(get_innertext_by_css_selector(soup, '.text-red-700'))
-        self.status['recovery'] = get_number_only(get_innertext_by_css_selector(soup, '.text-yellow-500'))
+        self.status['total'] = get_number_only(get_innertext_by_css_selector('.text-xs.text-gray-800.text-right > span:first-child'))
+        self.status['active'] = get_number_only(get_innertext_by_css_selector('.text-green-600'))
+        self.status['fault'] = get_number_only(get_innertext_by_css_selector('.text-red-700'))
+        self.status['recovery'] = get_number_only(get_innertext_by_css_selector('.text-yellow-500'))
         
         curr_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.last_check_time = curr_timestamp
