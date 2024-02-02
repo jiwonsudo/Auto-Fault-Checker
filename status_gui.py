@@ -9,8 +9,8 @@ class StatusGUI(Account):
     def __init__(self):
         self.root = tk.Tk()
 
-        self.root.title('Filecoin Status Auto Checker (FSAC) by Jiwon')
-        self.root.geometry('495x235+200+200')
+        self.root.title('Mining System Status Automatic Checker (MSSAC) by Jiwon')
+        self.root.geometry('495x230+200+200')
         self.root.resizable(True, True)
         
         pygame.init()
@@ -51,8 +51,18 @@ class StatusGUI(Account):
         globals()[f'self.account_{self.num_of_account}_strVar'] = tk.StringVar(self.root)
         globals()[f'self.account_{self.num_of_account}_strVar'].set(f'여기에 계정 {self.num_of_account}의 상태가 표시됩니다.')
         
-        globals()[f'self.account_{self.num_of_account}_lbl'] = tk.Label(self.root, textvariable=globals()[f'self.account_{self.num_of_account}_strVar'], width=55, height=2, bg='white', fg='black', anchor='w')
-        globals()[f'self.account_{self.num_of_account}_lbl'].grid(row=1 + self.num_of_account, column=0, sticky='w')
+        globals()[f'self.account_{self.num_of_account}_isOk_strVar'] = tk.StringVar(self.root)
+        globals()[f'self.account_{self.num_of_account}_isOk_strVar'].set('Start')
+        
+        globals()[f'self.account_{self.num_of_account}_frame'] = tk.Frame(self.root)
+        
+        globals()[f'self.account_{self.num_of_account}_lbl'] = tk.Label(globals()[f'self.account_{self.num_of_account}_frame'], textvariable=globals()[f'self.account_{self.num_of_account}_strVar'], width=45, height=2, bg='white', fg='black', anchor='w')
+        globals()[f'self.account_{self.num_of_account}_lbl'].grid(row=0, column=0)
+        
+        globals()[f'self.account_{self.num_of_account}_isOk_lbl'] = tk.Label(globals()[f'self.account_{self.num_of_account}_frame'], textvariable=globals()[f'self.account_{self.num_of_account}_isOk_strVar'], width=9, height=2, bg='black', fg='white')
+        globals()[f'self.account_{self.num_of_account}_isOk_lbl'].grid(row=0, column=1)
+        
+        globals()[f'self.account_{self.num_of_account}_frame'].grid(row=1 + self.num_of_account, column=0, sticky='w')
         
         self.num_of_account += 1
         
@@ -61,8 +71,13 @@ class StatusGUI(Account):
         globals()[f'self.account_{account_id}_strVar'].set(f'ID {account_id} ({globals()[f'self.account_{account_id}'].id}):  TOTL {globals()[f'self.account_{account_id}'].status['total']}, ACTV {globals()[f'self.account_{account_id}'].status['active']}, FALT {globals()[f'self.account_{account_id}'].status['fault']}, RECV {globals()[f'self.account_{account_id}'].status['recovery']}')
         
         if globals()[f'self.account_{account_id}'].status['fault'] > 0:
-            globals()[f'self.account_{account_id}_lbl'].config(bg='red', fg='white')
-            self.beep_sound.play(-1, 20000)  # 20 seconds beep
+            globals()[f'self.account_{account_id}_isOk_lbl'].config(bg='red', fg='yellow')
+            globals()[f'self.account_{account_id}_isOk_strVar'].set(f'{globals()[f'self.account_{account_id}'].status['fault']} FAULT')
+            self.beep_sound.play(-1, 30000)  # 30 seconds beep
+        elif globals()[f'self.account_{account_id}'].status['fault'] == 0:
+            globals()[f'self.account_{account_id}_isOk_lbl'].config(bg='green', fg='white')
+            globals()[f'self.account_{account_id}_isOk_strVar'].set('NO FAULT')
+            
     
     def start(self):
         status_checking_duration = 120  # 2 minutes (=120 sec)
