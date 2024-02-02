@@ -2,6 +2,7 @@ import tkinter as tk
 from datetime import datetime
 import threading
 import pygame
+from typing import Callable
 
 from account import Account
 
@@ -22,22 +23,31 @@ class StatusGUI(Account):
         self.time_str = tk.StringVar(self.root)
         self.last_check_time_str = tk.StringVar(self.root)
     
-    def load(self):
+    def load(self, type_of_OS: str):
+        curr_time_lbl_width: int
+        last_check_time_lbl_width: int
+        
+        if type_of_OS == 'macOS':
+            curr_time_lbl_width = 23
+            last_check_time_lbl_width = 31
+        elif type_of_OS == 'windows':
+            curr_time_lbl_width = 30
+            last_check_time_lbl_width = 40
+        
         self.time_str.set('|----------Welcome----------|')
         self.last_check_time_str.set('|----------Welcome----------|')
         
         frame_times = tk.Frame(self.root)
         
-        lbl_curr_time = tk.Label(frame_times, textvariable=self.time_str, width=23, height=2, bg='blue', fg='yellow')
+        lbl_curr_time = tk.Label(frame_times, textvariable=self.time_str, width=curr_time_lbl_width, height=2, bg='blue', fg='yellow')
         lbl_curr_time.grid(row=0, column=0, sticky='w')
         
-        lbl_last_check_time = tk.Label(frame_times, textvariable=self.last_check_time_str, width=31, height=2, bg='yellow', fg='blue')
+        lbl_last_check_time = tk.Label(frame_times, textvariable=self.last_check_time_str, width=last_check_time_lbl_width, height=2, bg='yellow', fg='blue')
         lbl_last_check_time.grid(row=0, column=1,sticky='w')
-        
+ 
         frame_times.grid(row=0, column=0, sticky='w')
         
-        
-    def set_interval(self, func, sec):
+    def set_interval(self, func: Callable, sec: float):
         def func_wrapper():
             self.set_interval(func, sec)
             func()
@@ -45,7 +55,13 @@ class StatusGUI(Account):
         t.start()
         return t
     
-    def add_account(self, account: Account):
+    def add_account(self, account: Account, type_of_OS: str):
+        lbl_width: int;
+        if type_of_OS == 'macOS':
+            lbl_width = 45
+        elif type_of_OS == 'windows':
+            lbl_width = 60
+        
         globals()[f'self.account_{self.num_of_account}']: Account = account  # account_{id}
         
         globals()[f'self.account_{self.num_of_account}_strVar'] = tk.StringVar(self.root)
@@ -56,7 +72,7 @@ class StatusGUI(Account):
         
         globals()[f'self.account_{self.num_of_account}_frame'] = tk.Frame(self.root)
         
-        globals()[f'self.account_{self.num_of_account}_lbl'] = tk.Label(globals()[f'self.account_{self.num_of_account}_frame'], textvariable=globals()[f'self.account_{self.num_of_account}_strVar'], width=45, height=2, bg='white', fg='black', anchor='w')
+        globals()[f'self.account_{self.num_of_account}_lbl'] = tk.Label(globals()[f'self.account_{self.num_of_account}_frame'], textvariable=globals()[f'self.account_{self.num_of_account}_strVar'], width=lbl_width, height=2, bg='white', fg='black', anchor='w')
         globals()[f'self.account_{self.num_of_account}_lbl'].grid(row=0, column=0)
         
         globals()[f'self.account_{self.num_of_account}_isOk_lbl'] = tk.Label(globals()[f'self.account_{self.num_of_account}_frame'], textvariable=globals()[f'self.account_{self.num_of_account}_isOk_strVar'], width=9, height=2, bg='black', fg='white')
@@ -79,7 +95,7 @@ class StatusGUI(Account):
             globals()[f'self.account_{account_id}_isOk_strVar'].set('NO FAULT')
             
     
-    def start(self):
+    def start(self, type_of_OS: str):
         status_checking_duration = 120  # 2 minutes (=120 sec)
         
         def clock():
@@ -99,7 +115,7 @@ class StatusGUI(Account):
                     
         self.set_interval(clock, 1)
         
-        self.load()
+        self.load(type_of_OS)
         
         self.start_sound.play()
         
