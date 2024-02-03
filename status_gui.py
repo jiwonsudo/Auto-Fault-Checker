@@ -83,14 +83,15 @@ class StatusGUI(Account):
         self.num_of_account += 1
         
     def update_account_strVar(self, account_id: int):
+        account = globals()[f'self.account_{account_id}']
         globals()[f'self.account_{account_id}'].update_status()
-        globals()[f'self.account_{account_id}_strVar'].set(f'ID {account_id} ({globals()[f'self.account_{account_id}'].id}):  TOTL {globals()[f'self.account_{account_id}'].status['total']}, ACTV {globals()[f'self.account_{account_id}'].status['active']}, FALT {globals()[f'self.account_{account_id}'].status['fault']}, RECV {globals()[f'self.account_{account_id}'].status['recovery']}')
+        globals()[f'self.account_{account_id}_strVar'].set(f'ID {account_id:<2} : {account.id:<10} || TTL {account.status['total']:<8,} ACT {account.status['active']:<8,} FLT {account.status['fault']:<8,} REV {account.status['recovery']:<8,}')
         
-        if globals()[f'self.account_{account_id}'].status['fault'] > 0:
+        if globals()[f'self.account_{account_id}'].status['fault'] > 0:  # if account.status has falut
             globals()[f'self.account_{account_id}_isOk_lbl'].config(bg='red', fg='yellow')
             globals()[f'self.account_{account_id}_isOk_strVar'].set(f'{globals()[f'self.account_{account_id}'].status['fault']} FAULT')
             self.beep_sound.play(-1, 30000)  # 30 seconds beep
-        elif globals()[f'self.account_{account_id}'].status['fault'] == 0:
+        elif globals()[f'self.account_{account_id}'].status['fault'] == 0:  # if account.status has no falut
             globals()[f'self.account_{account_id}_isOk_lbl'].config(bg='green', fg='white')
             globals()[f'self.account_{account_id}_isOk_strVar'].set('NO FAULT')
             
